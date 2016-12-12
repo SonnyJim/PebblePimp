@@ -1,0 +1,26 @@
+{
+    "author": "ewan.meadows@gmail.com",
+    "dependencies": {},
+    "keywords": [],
+    "name": "pimpin-aint-easy",
+    "pebble": {
+        "displayName": "Pimpin' Aint Easy",
+        "enableMultiJS": true,
+        "messageKeys": [],
+        "projectType": "native",
+        "resources": {
+            "media": []
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "aplite",
+            "basalt",
+            "chalk"
+        ],
+        "uuid": "70a0f749-7d14-4fd6-a698-9a4f16decae7",
+        "watchapp": {
+            "watchface": true
+        }
+    },
+    "version": "1.0.0"
+}
