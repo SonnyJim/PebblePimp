@@ -149,9 +149,17 @@ void canvas_update_proc(Layer *layer, GContext *ctx) {
   graphics_context_set_fill_color(ctx, GColorWhite);
   
   draw_grid(ctx);
-  draw_hours(hours, ctx);
-  draw_minutes(minutes, ctx);
   
+  if (current_mode == show_time)
+  {
+    draw_hours(hours, ctx);
+    draw_minutes(minutes, ctx);
+  }
+  else
+  {
+    draw_hours (month, ctx);
+    draw_minutes (day, ctx);
+  }
   //Draw the hours and minutes
   graphics_context_set_text_color(ctx, GColorWhite);
   draw_text (ctx, layer);

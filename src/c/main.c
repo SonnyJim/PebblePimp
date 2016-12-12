@@ -15,7 +15,8 @@ static void update_time() {
   hours_gmt = gmt_tm->tm_hour;
   dst_gmt = gmt_tm->tm_isdst;
   
-  month = now_tm->tm_mon;
+  //Month is from 0 - 11, duuh
+  month = now_tm->tm_mon + 1;
   day = now_tm->tm_mday;
   
   
@@ -44,11 +45,33 @@ static void main_window_unload(Window *window) {
   //Destroy the canvas layer??
 }
 
+static void tap_timeout (void * value)
+{
+  current_mode = show_time;
+  update_time ();
+}
+
 static void accel_tap_handler(AccelAxisType axis, int32_t direction) {
   // A tap event occured
    APP_LOG(APP_LOG_LEVEL_DEBUG, "A tap happened");
-
-}
+  
+  if (current_mode == show_time)
+  {
+    current_mode = show_date;
+    //Start a timer to change the mode back after 3 seconds
+    tap_timer = app_timer_register(3000, tap_timeout, NULL);
+  }
+  else
+  {
+    current_mode = show_time;
+    if (tap_timer != NULL)
+      app_timer_cancel (tap_timer);
+  }
+    
+  //Force redraw
+  update_time ();
+  
+  }
 
 
 static void init() {
@@ -67,6 +90,10 @@ static void init() {
   layer_set_update_proc(s_canvas_layer, canvas_update_proc);
   // Add to Window
   layer_add_child(window_get_root_layer(s_main_window), s_canvas_layer);
+  
+  //Set the watchface to show time
+  current_mode = show_time;
+  
   // Make sure the time is displayed from the start
   update_time();
 

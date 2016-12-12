@@ -10,3 +10,13 @@ int hours, minutes, hours_gmt, dst_gmt;
 int month, day;
 
 extern void canvas_update_proc(Layer *layer, GContext *ctx);
+
+enum watch_modes
+{
+  show_time,
+  show_date
+};
+
+int current_mode;
+
+AppTimer * tap_timer;
