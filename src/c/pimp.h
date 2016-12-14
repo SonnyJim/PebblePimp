@@ -22,6 +22,6 @@ enum watch_modes
   show_date
 };
 
-int current_mode;
+int watch_mode;
 
 AppTimer * tap_timer;

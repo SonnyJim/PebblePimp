@@ -47,21 +47,22 @@ static void main_window_unload(Window *window) {
 
 static void tap_timeout (void * value)
 {
-  current_mode = show_time;
+  watch_mode = show_time;
   update_time ();
 }
 
-static void accel_tap_handler(AccelAxisType axis, int32_t direction) {
+static void accel_tap_handler(AccelAxisType axis, int32_t direction) 
+{
   // A tap event occured
-  if (current_mode == show_time)
+  if (watch_mode == show_time)
   {
-    current_mode = show_date;
+    watch_mode = show_date;
     //Start a timer to change the mode back after 3 seconds
     tap_timer = app_timer_register(3000, tap_timeout, NULL);
   }
   else
   {
-    current_mode = show_time;
+    watch_mode = show_time;
     if (tap_timer != NULL)
       app_timer_cancel (tap_timer);
   }
@@ -69,7 +70,7 @@ static void accel_tap_handler(AccelAxisType axis, int32_t direction) {
   //Force redraw
   update_time ();
   
-  }
+}
 
 
 static void init() {
@@ -90,7 +91,7 @@ static void init() {
   layer_add_child(window_get_root_layer(s_main_window), s_canvas_layer);
   
   //Set the watchface to show time
-  current_mode = show_time;
+  watch_mode = show_time;
   
   // Make sure the time is displayed from the start
   update_time();

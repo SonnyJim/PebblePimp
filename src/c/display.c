@@ -19,16 +19,13 @@ static void face_init (void)
   }
 }
 
+//Update the face array with the hours and minutes provided
 static void face_update (int hours, int minutes)
 {
   int x, y = 0;
   int rows = minutes / 5;
   int remainder = minutes % 5;
-  
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "rows is %d, remainder %d", rows, remainder);
-  
-  face_init ();
-  
+    
   //Fill the array with the hours
   x = 0;
   for (y = 0; y < hours; y++)
@@ -53,27 +50,46 @@ static void face_update (int hours, int minutes)
   }
 }
 
-//Draws a rounded rectangle at a particular position on the face
+//Draws a rounded rectangle at a given position on the face
 static void face_fill (int x, int y, GContext *ctx)
 {
   int x_face, y_face;
   //Convert the grid array coords into the screen coords
   x_face = 1 + offset_x + (x * (BLOBSIZE + 1));
   y_face = HEIGHT - BLOBSIZE - offset_y + 1 - (y * (BLOBSIZE + 1));
-  //GRect rect_bounds = GRect(x_face, y_face, BLOBSIZE - 2, BLOBSIZE - 2);
 
-  graphics_fill_rect(ctx, GRect(x_face, y_face, BLOBSIZE - 2, BLOBSIZE - 2), 3, GCornersAll);
+  graphics_fill_rect(ctx, GRect(x_face, y_face, BLOBSIZE - 2, BLOBSIZE - 2), 1, GCornersAll);
+}
+
+//Draw the 'D' symbol on the array when in date mode
+static void face_draw_date_symbol (void)
+{
+  face_array[3][11] = true;
+  face_array[4][11] = true;
+  face_array[3][10] = true;
+  face_array[5][10] = true;
+  face_array[3][9] = true;
+  face_array[5][9] = true;
+  face_array[3][8] = true;
+  face_array[5][8] = true;
+  face_array[3][7] = true;
+  face_array[4][7] = true;
 }
 
 static void draw_face (GContext *ctx)
 {
   int x, y;
   
-  //Update the face array with the current time
-  if (current_mode == show_time)
+  //Clear the face
+  face_init ();
+  
+  if (watch_mode == show_time)
     face_update (hours, minutes);
   else
+  {
+    face_draw_date_symbol ();
     face_update (month, day);
+  }
   
   //Draw the array contents into the grid
   for (y = 0; y < FACE_HEIGHT; y++)
@@ -82,7 +98,6 @@ static void draw_face (GContext *ctx)
       if (face_array[x][y])
         face_fill (x, y, ctx);
   }
-  
 }
 
 static void draw_grid (GContext *ctx)
@@ -131,18 +146,25 @@ static void draw_text (GContext *ctx)
   for (i = 1; i <= 12; i++)
   {
     //Draw hour text
-    snprintf (str, sizeof(str), "%i", i);
+    if (i < 10)
+      snprintf (str, sizeof(str), "0%i", i);
+    else
+      snprintf (str, sizeof(str), "%i", i);
     text_rect.origin.x = offset_x - 14;
     graphics_draw_text(ctx, str, fonts_get_system_font(FONT_KEY_GOTHIC_14), 
-                     text_rect, GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+                     text_rect, GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
     
     //Draw minutes text
-    snprintf (str, sizeof(str), "%i", i * 5);
+    if (i * 5 < 10)
+      snprintf (str, sizeof(str), "0%i", i * 5);
+    else
+      snprintf (str, sizeof(str), "%i", i * 5);
+
     text_rect.origin.x = offset_x + (BLOBSIZE * 7);
     text_rect.origin.x -= 4;
     
     graphics_draw_text(ctx, str, fonts_get_system_font(FONT_KEY_GOTHIC_14), 
-                     text_rect, GTextOverflowModeWordWrap, GTextAlignmentCenter, NULL);
+                     text_rect, GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
     
     text_rect.origin.y -= BLOBSIZE;
     text_rect.origin.y -= 1; //spacing
@@ -163,7 +185,6 @@ void canvas_update_proc(Layer *layer, GContext *ctx) {
   graphics_context_set_text_color(ctx, GColorWhite);
   
   draw_grid(ctx);
-  //Draw the hours and minutes text
   draw_text (ctx);
 
   draw_face (ctx);
