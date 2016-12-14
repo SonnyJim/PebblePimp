@@ -3,8 +3,13 @@
 /* Pimp watch resolution is 6x12 */
 
 #define BLOBSIZE 12
+//Screen resolution
 #define WIDTH 144
 #define HEIGHT 168
+
+//Face resolution
+#define FACE_WIDTH 6
+#define FACE_HEIGHT 12
 
 int hours, minutes, hours_gmt, dst_gmt;
 int month, day;

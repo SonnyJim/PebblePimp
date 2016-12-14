@@ -53,8 +53,6 @@ static void tap_timeout (void * value)
 
 static void accel_tap_handler(AccelAxisType axis, int32_t direction) {
   // A tap event occured
-   APP_LOG(APP_LOG_LEVEL_DEBUG, "A tap happened");
-  
   if (current_mode == show_time)
   {
     current_mode = show_date;
