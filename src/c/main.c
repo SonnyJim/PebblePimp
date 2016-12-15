@@ -30,6 +30,9 @@ static void update_time() {
   if (hours > 12)
     hours -= 12;
   
+  if (hours == 0)
+    hours = 12;
+  
   if (hours_gmt > 12)
     hours_gmt -= 12;
   
@@ -94,7 +97,7 @@ static void init() {
   
   //Set the watchface to show time
   watch_mode = show_time;
-  //watch_mode = show_anim;
+  
   // Make sure the time is displayed from the start
   update_time();
 
