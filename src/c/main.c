@@ -68,10 +68,8 @@ static void accel_tap_handler(AccelAxisType axis, int32_t direction)
   }
     
   //Force redraw
-  update_time ();
-  
+  update_time ();  
 }
-
 
 static void init() {
   // Create main Window element and assign to pointer
