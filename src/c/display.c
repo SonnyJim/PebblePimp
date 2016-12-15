@@ -4,7 +4,7 @@
 bool face_array[FACE_WIDTH][FACE_HEIGHT];
 
 //Initialise the face array
-static void face_init_array (void)
+void face_init_array (void)
 {
   int x,y;
   
@@ -70,17 +70,23 @@ static void draw_face (GContext *ctx)
   face_init_array ();
   draw_grid (ctx);
   draw_text (ctx);
-  //draw_gmt (ctx);
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "gmt time %d", hours_gmt);
+
   if (watch_mode == show_time)
+  {
     face_update (hours, minutes);
-  else
+    draw_face_array (ctx);
+  }
+  else if (watch_mode == show_date)
   {
     face_draw_date_symbol ();
     face_update (month, day);
     draw_gmt (ctx);
+    draw_face_array (ctx);
   }
-  draw_face_array (ctx);
+  else if (watch_mode == show_anim)
+  {
+    anim_draw (ctx);  
+  }
 }
 
 

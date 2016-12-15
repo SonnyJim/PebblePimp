@@ -19,9 +19,11 @@ extern void canvas_update_proc(Layer *layer, GContext *ctx);
 enum watch_modes
 {
   show_time,
-  show_date
+  show_date,
+  show_anim
 };
 
 int watch_mode;
 
 AppTimer * tap_timer;
+void anim_draw (GContext *ctx);

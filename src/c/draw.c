@@ -56,6 +56,9 @@ void draw_text (GContext *ctx)
     text_rect.origin.x = offset_x - 14;
     graphics_draw_text(ctx, str, fonts_get_system_font(FONT_KEY_GOTHIC_14), 
                      text_rect, GTextOverflowModeWordWrap, GTextAlignmentLeft, NULL);
+    //Draw the GMT dot
+    if (hours_gmt == i && watch_mode == show_date)
+      graphics_fill_circle (ctx, GPoint (10, text_rect.origin.y + 9), 2);
     
     //Draw minutes text
     if (i * 5 < 10)
@@ -86,12 +89,16 @@ void draw_face_array (GContext *ctx)
   }
 }
 
+//Draw a dot showing the GMT hour
 void draw_gmt (GContext *ctx)
 {
+  /*
   int y;
-  y = HEIGHT - offset_y + 2;
-  y -= hours_gmt * BLOBSIZE; 
+  hours_gmt = 1;
+  y = HEIGHT - offset_y - 4 - (hours_gmt * (BLOBSIZE));
+  //y -= hours_gmt * (BLOBSIZE); 
   graphics_fill_circle (ctx, GPoint (10, y), 2);
+  */
 }
 
 //Draws a rounded rectangle at a given position on the face
@@ -104,3 +111,4 @@ void face_fill (int x, int y, GContext *ctx)
 
   graphics_fill_rect(ctx, GRect(x_face, y_face, BLOBSIZE - 2, BLOBSIZE - 2), 1, GCornersAll);
 }
+

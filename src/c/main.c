@@ -3,6 +3,12 @@
 static Layer *s_canvas_layer;
 static Window *s_main_window;
 
+void redraw_canvas (void)
+{
+  // Redraw the watchface
+  layer_mark_dirty(s_canvas_layer);
+}
+ 
 static void update_time() {
   // Get a tm structure
   time_t temp = time(NULL); 
@@ -27,10 +33,8 @@ static void update_time() {
   if (hours_gmt > 12)
     hours_gmt -= 12;
   
-  // Redraw the watchface
-  layer_mark_dirty(s_canvas_layer);
+  redraw_canvas ();
 }
-
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
   update_time();
@@ -90,7 +94,7 @@ static void init() {
   
   //Set the watchface to show time
   watch_mode = show_time;
-  
+  //watch_mode = show_anim;
   // Make sure the time is displayed from the start
   update_time();
 
