@@ -8,7 +8,22 @@ void redraw_canvas (void)
   // Redraw the watchface
   layer_mark_dirty(s_canvas_layer);
 }
- 
+
+static int time_convert (int zulutime)
+{
+  int time;
+  
+  time = zulutime;
+  
+  if (time > 12)
+    time -= 12;
+  
+  if (time == 0)
+    time = 12;
+  
+  return time;
+}
+
 static void update_time() {
   // Get a tm structure
   time_t temp = time(NULL); 
@@ -27,14 +42,8 @@ static void update_time() {
   
   
   //Only show 12hr time format
-  if (hours > 12)
-    hours -= 12;
-  
-  if (hours == 0)
-    hours = 12;
-  
-  if (hours_gmt > 12)
-    hours_gmt -= 12;
+  hours = time_convert (hours);
+  hours_gmt = time_convert (hours_gmt);
   
   redraw_canvas ();
 }
