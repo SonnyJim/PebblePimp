@@ -1,6 +1,7 @@
 #include "src/c/pimp.h"
 
 static Layer *s_canvas_layer;
+//static Layer *s_anim_layer;
 static Window *s_main_window;
 
 void redraw_canvas (void)
@@ -9,19 +10,14 @@ void redraw_canvas (void)
   layer_mark_dirty(s_canvas_layer);
 }
 
-static int time_convert (int zulutime)
+static int time_convert (int hours)
 {
-  int time;
-  
-  time = zulutime;
-  
-  if (time > 12)
-    time -= 12;
-  
-  if (time == 0)
-    time = 12;
-  
-  return time;
+  if (hours > 12)
+    return hours -= 12;
+  else if (hours == 0)
+    return 12;
+  else
+    return hours;
 }
 
 static void update_time() {
@@ -59,6 +55,7 @@ static void main_window_load(Window *window) {
 
 static void main_window_unload(Window *window) {
   //Destroy the canvas layer??
+  //layer_destroy (s_canvas_layer);
 }
 
 static void tap_timeout (void * value)
@@ -101,11 +98,14 @@ static void init() {
   window_stack_push(s_main_window, true);
   // Assign the custom drawing procedure
   layer_set_update_proc(s_canvas_layer, canvas_update_proc);
+  //layer_set_update_proc(s_anim_layer, anim_update_proc);
+  
   // Add to Window
   layer_add_child(window_get_root_layer(s_main_window), s_canvas_layer);
   
   //Set the watchface to show time
-  watch_mode = show_time;
+  //watch_mode = show_time;
+  watch_mode = show_anim;
   
   // Make sure the time is displayed from the start
   update_time();

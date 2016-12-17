@@ -85,13 +85,12 @@ static void draw_face (GContext *ctx)
   }
   else if (watch_mode == show_anim)
   {
-    anim_draw (ctx);  
+    anim_draw (ctx);
   }
 }
 
-
-//Main drawing routine
-void canvas_update_proc(Layer *layer, GContext *ctx) {
+static void set_bg_fg_colour (GContext *ctx)
+{
   //Set the background to black
   GRect rect_bounds = GRect (0, 0, WIDTH, HEIGHT);
   graphics_context_set_stroke_color(ctx, GColorBlack);
@@ -102,6 +101,29 @@ void canvas_update_proc(Layer *layer, GContext *ctx) {
   graphics_context_set_stroke_color(ctx, GColorWhite);
   graphics_context_set_fill_color(ctx, GColorWhite);
   graphics_context_set_text_color(ctx, GColorWhite);
+}
+
+//Main drawing routine
+void canvas_update_proc(Layer *layer, GContext *ctx) 
+{  
+  set_bg_fg_colour (ctx);
+  /*
+    GRect rect_bounds = GRect (0, 0, WIDTH, HEIGHT);
+  graphics_context_set_stroke_color(ctx, GColorBlack);
+  graphics_context_set_fill_color(ctx, GColorBlack);
+  graphics_fill_rect(ctx, rect_bounds, 0, GCornersAll);
   
+  //Set the colours for everything else
+  graphics_context_set_stroke_color(ctx, GColorWhite);
+  graphics_context_set_fill_color(ctx, GColorWhite);
+  graphics_context_set_text_color(ctx, GColorWhite);
+  */
   draw_face (ctx);
 }
+/*
+void anim_update_proc(Layer *layer, GContext *ctx) 
+{
+  set_bg_fg_colour (ctx);
+  anim_draw (ctx);
+}
+*/
