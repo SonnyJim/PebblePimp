@@ -68,8 +68,7 @@ static void draw_face (GContext *ctx)
 {
   //Clear the face
   face_init_array ();
-  draw_grid (ctx);
-  draw_text (ctx);
+
 
   if (watch_mode == show_time)
   {
@@ -80,7 +79,6 @@ static void draw_face (GContext *ctx)
   {
     face_draw_date_symbol ();
     face_update (month, day);
-    draw_gmt (ctx);
     draw_face_array (ctx);
   }
   else if (watch_mode == show_anim)
@@ -103,27 +101,17 @@ static void set_bg_fg_colour (GContext *ctx)
   graphics_context_set_text_color(ctx, GColorWhite);
 }
 
-//Main drawing routine
-void canvas_update_proc(Layer *layer, GContext *ctx) 
-{  
+void grid_update_proc(Layer *layer, GContext *ctx) 
+{
   set_bg_fg_colour (ctx);
-  /*
-    GRect rect_bounds = GRect (0, 0, WIDTH, HEIGHT);
-  graphics_context_set_stroke_color(ctx, GColorBlack);
-  graphics_context_set_fill_color(ctx, GColorBlack);
-  graphics_fill_rect(ctx, rect_bounds, 0, GCornersAll);
-  
-  //Set the colours for everything else
+  draw_grid (ctx);
+  draw_text (ctx);
+}
+
+void dots_update_proc(Layer *layer, GContext *ctx) 
+{
   graphics_context_set_stroke_color(ctx, GColorWhite);
   graphics_context_set_fill_color(ctx, GColorWhite);
   graphics_context_set_text_color(ctx, GColorWhite);
-  */
   draw_face (ctx);
 }
-/*
-void anim_update_proc(Layer *layer, GContext *ctx) 
-{
-  set_bg_fg_colour (ctx);
-  anim_draw (ctx);
-}
-*/

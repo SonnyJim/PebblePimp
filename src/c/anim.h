@@ -15,6 +15,9 @@ const int anim1[ANIM1_STEPS][3] =
   {1,0, UP}, {1,10, RIGHT}, {4,10, DOWN}, {4,2,STOP}
 };
 
+extern void anim_layer_add (void);
+extern void anim_layer_remove (void);
+
 /*
 #define ANIM1_STEPS 5
 const int anim1[ANIM1_STEPS][3] = 

@@ -89,26 +89,17 @@ void draw_face_array (GContext *ctx)
   }
 }
 
-//Draw a dot showing the GMT hour
-void draw_gmt (GContext *ctx)
-{
-  /*
-  int y;
-  hours_gmt = 1;
-  y = HEIGHT - offset_y - 4 - (hours_gmt * (BLOBSIZE));
-  //y -= hours_gmt * (BLOBSIZE); 
-  graphics_fill_circle (ctx, GPoint (10, y), 2);
-  */
-}
-
 //Draws a rounded rectangle at a given position on the face
-void face_fill (int x, int y, GContext *ctx)
+int face_fill (int x, int y, GContext *ctx)
 {
+  if (x > 6 || y > 12)
+    return 1;
   int x_face, y_face;
   //Convert the grid array coords into the screen coords
   x_face = 1 + offset_x + (x * (BLOBSIZE + 1));
   y_face = HEIGHT - BLOBSIZE - offset_y + 1 - (y * (BLOBSIZE + 1));
 
   graphics_fill_rect(ctx, GRect(x_face, y_face, BLOBSIZE - 2, BLOBSIZE - 2), 1, GCornersAll);
+  return 0;
 }
 

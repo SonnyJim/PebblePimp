@@ -3,10 +3,31 @@
 #include "src/c/draw.h"
 
 extern void redraw_canvas (void);
+AppTimer * anim_timer;
+
+static void timer_callback(void *context) 
+{
+  layer_mark_dirty(anim_layer);
+  app_timer_register(50, timer_callback, NULL);
+}
 
 static void display_face (void)
 {
   //put in here however we are going to update the display
+}
+
+void anim_start ()
+{
+  watch_mode = show_anim;
+  anim_layer_add ();
+  anim_timer = app_timer_register(50, timer_callback, NULL); 
+}
+
+void anim_stop ()
+{
+  app_timer_cancel (anim_timer);
+  anim_layer_remove ();
+  watch_mode = show_time;
 }
 
 void anim_draw (GContext *ctx)
@@ -14,15 +35,16 @@ void anim_draw (GContext *ctx)
   int i,j,x,y;
   
   face_init_array ();
-  draw_grid (ctx);
-  draw_text (ctx);
+  
+  //draw_grid (ctx);
+  //draw_text (ctx);
   
   //Load up the initial values
   x = anim1[0][0];
   y = anim1[0][1];
 
   face_fill (x, y, ctx);
-  display_face ();
+
   
   for (i = 0; i < ANIM1_STEPS; i++)
   {
@@ -58,6 +80,10 @@ void anim_draw (GContext *ctx)
         break;
       }
     }
-  //Animation is finished, show watchface again
-  watch_mode = show_time;
+  //Animation is finished
+}
+
+void anim_update_proc(Layer *layer, GContext *ctx)
+{
+    
 }

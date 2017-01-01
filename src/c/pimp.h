@@ -1,4 +1,6 @@
 #include <pebble.h>
+#pragma once
+
 /* Pebble classic resolution is 144×168 */
 /* Pimp watch resolution is 6x12 */
 
@@ -14,7 +16,9 @@
 int hours, minutes, hours_gmt, dst_gmt;
 int month, day;
 
-extern void canvas_update_proc(Layer *layer, GContext *ctx);
+extern void grid_update_proc(Layer *layer, GContext *ctx);
+extern void dots_update_proc(Layer *layer, GContext *ctx);
+
 extern void anim_update_proc(Layer *layer, GContext *ctx);
 
 enum watch_modes
@@ -28,3 +32,8 @@ int watch_mode;
 
 AppTimer * tap_timer;
 void anim_draw (GContext *ctx);
+
+Layer *grid_layer;
+Layer *dots_layer;
+
+Layer *anim_layer;
