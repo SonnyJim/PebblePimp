@@ -19,8 +19,6 @@ int month, day;
 extern void grid_update_proc(Layer *layer, GContext *ctx);
 extern void dots_update_proc(Layer *layer, GContext *ctx);
 
-extern void anim_update_proc(Layer *layer, GContext *ctx);
-
 enum watch_modes
 {
   show_time,
@@ -31,9 +29,8 @@ enum watch_modes
 int watch_mode;
 
 AppTimer * tap_timer;
-void anim_draw (GContext *ctx);
 
 Layer *grid_layer;
 Layer *dots_layer;
 
-Layer *anim_layer;
+void update_time (void);

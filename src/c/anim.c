@@ -1,89 +1,154 @@
 #include "pimp.h"
 #include "anim.h"
 #include "src/c/draw.h"
+#include "src/c/frame.h"
 
-extern void redraw_canvas (void);
 AppTimer * anim_timer;
 
 static void timer_callback(void *context) 
 {
-  layer_mark_dirty(anim_layer);
-  app_timer_register(50, timer_callback, NULL);
+  layer_mark_dirty(dots_layer);
+  app_timer_register(anim.wait, timer_callback, NULL);
 }
 
-static void display_face (void)
+static int anim_check_dot (int frame_no, int j, int i)
 {
-  //put in here however we are going to update the display
-}
-
-void anim_start ()
-{
-  watch_mode = show_anim;
-  anim_layer_add ();
-  anim_timer = app_timer_register(50, timer_callback, NULL); 
-}
-
-void anim_stop ()
-{
-  app_timer_cancel (anim_timer);
-  anim_layer_remove ();
-  watch_mode = show_time;
-}
-
-void anim_draw (GContext *ctx)
-{
-  int i,j,x,y;
-  
-  face_init_array ();
-  
-  //draw_grid (ctx);
-  //draw_text (ctx);
-  
-  //Load up the initial values
-  x = anim1[0][0];
-  y = anim1[0][1];
-
-  face_fill (x, y, ctx);
-
-  
-  for (i = 0; i < ANIM1_STEPS; i++)
+  switch (anim.num)
   {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Loop index now %d, %d, %d", anim1[i][0], anim1[i][1], anim1[i][2]);
-    x = anim1[i][0];
-    y = anim1[i][1];
-    
-    if (anim1[i][2] == STOP)
+    case 1:
+      return anim1_frame[frame_no][j][i];
       break;
     
-    for (j = 0; j < 12; j++)
-    {
-      switch (anim1[i][2])
-      {
-        case UP:
-          y++;
-          break;
-        case DOWN:
-          y--; 
-          break;
-        case LEFT:
-          x--;
-          break;
-        case RIGHT:
-           x++;
-           break;
-         default:
-           break;
-      }
-          
-      APP_LOG(APP_LOG_LEVEL_DEBUG, "%d, %d, want %d %d", x,y, anim1[i + 1][0], anim1[i + 1][1]);
-      if (x == anim1[i + 1][0] && y == anim1[i + 1][1])
-        break;
-      }
-    }
-  //Animation is finished
+    case 2:
+      return anim2_frame[frame_no][j][i];
+      break;
+    
+    case 3:
+      return anim3_frame[frame_no][j][i];
+      break;
+    
+    case 4:
+      return anim4_frame[frame_no][j][i];
+      break;
+    default:
+      return 1;
+      break;
+  }
 }
 
-void anim_update_proc(Layer *layer, GContext *ctx)
+static void anim_load (int anim_num)
 {
+  anim.step = 0;
+  anim.num = anim_num;
+  anim.wait = 1;
+  switch (anim_num)
+  {
+    case 1:
+      anim.state = PING_PONG;
+      anim.max_steps = ANIM1_STEPS;
+      break;
     
+    case 2:
+      anim.state = PING_PONG;
+      anim.max_steps = ANIM2_STEPS;
+      break;
+    
+    case 3:
+      anim.wait = 50;
+      anim.state = PING_PONG;
+      anim.max_steps = ANIM3_STEPS;
+      break;
+       
+    case 4:
+      anim.wait = 50;
+      anim.state = PING_PONG;
+      anim.max_steps = ANIM4_STEPS;
+      break;
+    
+    default:
+      anim.state = STOP;
+      anim.max_steps = 0;
+      break;
+  }
+}
+
+void anim_start (int anim_num)
+{
+  //Randomise animation if none passed
+  if (anim_num == 0)
+  {
+    	anim_num = rand() / (RAND_MAX / MAX_ANIMS + 1) + 1;
+  }
+  
+  if (anim_num > MAX_ANIMS || anim_num < 1)
+  {
+    //FIXME APP_LOG here
+    return;
+  }
+  
+  anim_load (anim_num);
+  watch_mode = show_anim;
+  anim_timer = app_timer_register(anim.wait, timer_callback, NULL); 
+}
+
+void anim_stop (void)
+{
+  anim.step = 0;
+  anim.state = STOP;
+  anim.max_steps = 0;
+  app_timer_cancel (anim_timer);
+  watch_mode = show_time;
+  update_time ();
+}
+
+void anim_step_increment (void)
+{
+  
+  switch (anim.state)
+  {
+    case PING_PONG:
+      if (anim.step >= anim.max_steps - 1)
+        anim.state = BACKWARD;
+      else
+        anim.step++;
+    break;
+    
+    case FORWARD:
+      if (anim.step >= anim.max_steps - 1)
+        anim_stop ();
+      else
+        anim.step++;
+      break;
+    
+    case BACKWARD:
+      anim.step--;
+      if (anim.step <= 0)
+        anim_stop ();
+      break;
+    
+    case STOP:
+    default:
+      anim_stop ();
+      break;
+  }
+}
+
+void frame_draw_array (int frame_no)
+{
+  int i,j,n;
+  
+  //Odd X/Y is due to formatting in header file FIXME
+  for (i = 0; i < FACE_WIDTH; i++)
+  {
+    n = 11;
+    for (j = 0; j < FACE_HEIGHT; j++)
+    {   
+//      if (anim1_frame[frame_no][j][i])
+      if (anim_check_dot (frame_no, j, i))
+        face_array[i][n] = 1;
+      else
+        face_array[i][n] = 0;
+      n--;
+    }
+  }
 }

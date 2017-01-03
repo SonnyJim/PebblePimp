@@ -8,6 +8,6 @@ void face_init_array (void);
 
 int offset_x, offset_y;
 
-extern bool face_array[FACE_WIDTH][FACE_HEIGHT];
+bool face_array[FACE_WIDTH][FACE_HEIGHT];
 
 void anim_draw (GContext *ctx);

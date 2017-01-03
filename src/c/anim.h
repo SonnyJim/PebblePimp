@@ -1,27 +1,25 @@
 #pragma once
-typedef enum
+enum anim_states
 {
-  UP,
-  DOWN,
-  LEFT,
-  RIGHT,
-  STOP
-} direction_t;
-
-#define ANIM1_STEPS 8
-const int anim1[ANIM1_STEPS][3] = 
-{
-  {0,0, UP}, {0,11,RIGHT}, {5, 11, DOWN}, {5,0, LEFT}, 
-  {1,0, UP}, {1,10, RIGHT}, {4,10, DOWN}, {4,2,STOP}
+  STOP,
+  PING_PONG,
+  FORWARD,
+  BACKWARD
 };
 
-extern void anim_layer_add (void);
-extern void anim_layer_remove (void);
-
-/*
-#define ANIM1_STEPS 5
-const int anim1[ANIM1_STEPS][3] = 
+struct
 {
-  {0,0,UP}, {0,11,RIGHT}, {5, 11, DOWN}, {5,0, LEFT}, {0,0,STOP}
-};
-*/
+//  int init_state;
+  int step;
+  int max_steps;
+  int state;
+  int num; //Which animation we are playing
+  int wait; //How long to wait between frame updates
+} anim;
+
+void anim_start (int anim_num);
+void anim_stop (void);
+
+void anim_step_increment (void);
+void frame_draw_array (int frame_no);
+

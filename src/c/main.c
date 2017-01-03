@@ -1,17 +1,6 @@
 #include "src/c/pimp.h"
-
-static Layer *s_canvas_layer;
+#include "src/c/anim.h"
 static Window *s_main_window;
-
-void anim_layer_add (void)
-{
-  layer_add_child(window_get_root_layer(s_main_window), anim_layer);  
-}
-
-void anim_layer_remove (void)
-{
-   layer_remove_from_parent(anim_layer);  
-}
 
 void redraw_canvas (void)
 {
@@ -29,7 +18,8 @@ static int time_convert (int hours)
     return hours;
 }
 
-static void update_time() {
+void update_time (void) 
+{
   // Get a tm structure
   time_t temp = time(NULL); 
   struct tm *now_tm = localtime(&temp);
@@ -45,32 +35,35 @@ static void update_time() {
   month = now_tm->tm_mon + 1;
   day = now_tm->tm_mday;
   
-  
   //Only show 12hr time format
   hours = time_convert (hours);
   hours_gmt = time_convert (hours_gmt);
-  redraw_canvas ();
+  
+  //Redraw the dots layer
+  layer_mark_dirty(dots_layer);
 }
 
-static void tick_handler(struct tm *tick_time, TimeUnits units_changed) {
+static void tick_handler(struct tm *tick_time, TimeUnits units_changed) 
+{
+  //don't update the time if the animation is running
+  if (watch_mode == show_anim)
+    return;
+  
   update_time();
 }
 
-static void main_window_load(Window *window) {
+static void main_window_load(Window *window) 
+{
   //Create the two layers used
   GRect bounds = layer_get_bounds(window_get_root_layer(window));
-  s_canvas_layer = layer_create(bounds);
   grid_layer = layer_create(bounds);
   dots_layer = layer_create(bounds);
-  anim_layer = layer_create(bounds);
 }
 
-static void main_window_unload(Window *window) {
-  //Destroy the canvas layer??
-  layer_destroy (s_canvas_layer);
+static void main_window_unload(Window *window) 
+{
   layer_destroy (grid_layer);
   layer_destroy (dots_layer);
-  layer_destroy (anim_layer);
 }
 
 static void tap_timeout (void * value)
@@ -99,7 +92,11 @@ static void accel_tap_handler(AccelAxisType axis, int32_t direction)
   update_time ();  
 }
 
-static void init() {
+static void init (void) 
+{
+  //Initialise the RNG
+  srand(time(NULL));
+  
   // Create main Window element and assign to pointer
   s_main_window = window_create();
 
@@ -111,11 +108,9 @@ static void init() {
 
   // Show the Window on the watch, with animated=true
   window_stack_push(s_main_window, true);
-  // Assign the custom drawing procedure
-  
+  // Assign the custom drawing procedure  
   layer_set_update_proc (grid_layer, grid_update_proc);
   layer_set_update_proc (dots_layer, dots_update_proc);
-  //layer_set_update_proc(anim_layer, anim_update_proc);
   
   // Add to Window
   layer_add_child(window_get_root_layer(s_main_window), grid_layer);
@@ -123,7 +118,7 @@ static void init() {
 
   //Set the watchface to show time
   watch_mode = show_time;
-  //watch_mode = show_anim;
+  anim_start (0);
   
   // Make sure the time is displayed from the start
   update_time();

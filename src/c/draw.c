@@ -92,9 +92,14 @@ void draw_face_array (GContext *ctx)
 //Draws a rounded rectangle at a given position on the face
 int face_fill (int x, int y, GContext *ctx)
 {
-  if (x > 6 || y > 12)
-    return 1;
   int x_face, y_face;
+  
+  if (x > 6 || y > 12)
+  {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "face_fill warning:  %d,%d requested out of range", x,y);
+    return 1;
+  }
+  
   //Convert the grid array coords into the screen coords
   x_face = 1 + offset_x + (x * (BLOBSIZE + 1));
   y_face = HEIGHT - BLOBSIZE - offset_y + 1 - (y * (BLOBSIZE + 1));

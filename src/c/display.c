@@ -1,7 +1,6 @@
 #include "src/c/pimp.h"
 #include "src/c/draw.h"
-
-bool face_array[FACE_WIDTH][FACE_HEIGHT];
+#include "src/c/anim.h"
 
 //Initialise the face array
 void face_init_array (void)
@@ -66,25 +65,25 @@ static void face_draw_date_symbol (void)
 
 static void draw_face (GContext *ctx)
 {
-  //Clear the face
+  //Clear the face array
   face_init_array ();
-
 
   if (watch_mode == show_time)
   {
     face_update (hours, minutes);
-    draw_face_array (ctx);
   }
   else if (watch_mode == show_date)
   {
     face_draw_date_symbol ();
     face_update (month, day);
-    draw_face_array (ctx);
   }
   else if (watch_mode == show_anim)
   {
-    anim_draw (ctx);
+    frame_draw_array (anim.step);
+    anim_step_increment ();
   }
+  
+  draw_face_array (ctx);
 }
 
 static void set_bg_fg_colour (GContext *ctx)
