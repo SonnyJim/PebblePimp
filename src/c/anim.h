@@ -22,4 +22,3 @@ void anim_stop (void);
 
 void anim_step_increment (void);
 void frame_draw_array (int frame_no);
-

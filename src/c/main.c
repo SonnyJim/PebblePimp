@@ -3,13 +3,6 @@
 static Window *s_main_window;
 
 static int pimp_time_last_min;
-
-void redraw_canvas (void)
-{
-  // Redraw the watchface
-  layer_mark_dirty(dots_layer);
-}
-
 static int time_convert (int hours)
 {
   if (hours > 12)
@@ -27,7 +20,8 @@ static int pimp_time_check (int hours)
   
   pimp_time_last_min = minutes;
   
-  if ((hours > 18 || hours < 2) && minutes % 5 == 0)
+  if ((hours > 18 || hours < 2) )
+      //&& minutes % 5 == 0)
     return 1;
   else
     return 0;

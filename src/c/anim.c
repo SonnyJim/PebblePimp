@@ -30,6 +30,19 @@ static int anim_check_dot (int frame_no, int j, int i)
     case 4:
       return anim4_frame[frame_no][j][i];
       break;
+    
+    case 5:
+      return anim5_frame[frame_no][j][i];
+      break;
+    
+    case 6:
+      return anim6_frame[frame_no][j][i];
+      break;
+    
+    case 7:
+      return anim7_frame[frame_no][j][i];
+      break;
+          
     default:
       return 0;
       break;
@@ -65,7 +78,25 @@ static void anim_load (int anim_num)
       anim.state = PING_PONG;
       anim.max_steps = ANIM4_STEPS;
       break;
+
+    case 5:
+      anim.wait = 1;
+      anim.state = PING_PONG;
+      anim.max_steps = ANIM5_STEPS;
+      break;
     
+    case 6:
+      anim.wait = 300;
+      anim.state = FORWARD;
+      anim.max_steps = ANIM6_STEPS;
+      break;
+    
+    case 7:
+      anim.wait = 50;
+      anim.state = PING_PONG;
+      anim.max_steps = ANIM7_STEPS;
+      break;
+  
     default:
       anim.state = STOP;
       anim.max_steps = 0;
