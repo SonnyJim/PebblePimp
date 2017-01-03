@@ -84,8 +84,10 @@ void draw_face_array (GContext *ctx)
   for (y = 0; y < FACE_HEIGHT; y++)
   {
     for (x = 0; x < FACE_WIDTH; x++)
+    {
       if (face_array[x][y])
         face_fill (x, y, ctx);
+    }
   }
 }
 

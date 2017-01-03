@@ -2,6 +2,8 @@
 #include "src/c/anim.h"
 static Window *s_main_window;
 
+static int pimp_time_last_min;
+
 void redraw_canvas (void)
 {
   // Redraw the watchface
@@ -16,6 +18,19 @@ static int time_convert (int hours)
     return 12;
   else
     return hours;
+}
+
+static int pimp_time_check (int hours)
+{
+  if (pimp_time_last_min == minutes)
+    return 0;
+  
+  pimp_time_last_min = minutes;
+  
+  if ((hours > 18 || hours < 2) && minutes % 5 == 0)
+    return 1;
+  else
+    return 0;
 }
 
 void update_time (void) 
@@ -39,6 +54,8 @@ void update_time (void)
   hours = time_convert (hours);
   hours_gmt = time_convert (hours_gmt);
   
+  if (pimp_time_check (now_tm->tm_hour))
+    anim_start (0);
   //Redraw the dots layer
   layer_mark_dirty(dots_layer);
 }
@@ -118,16 +135,20 @@ static void init (void)
 
   //Set the watchface to show time
   watch_mode = show_time;
-  anim_start (0);
+  
   
   // Make sure the time is displayed from the start
   update_time();
-
+  
+  
   // Register with TickTimerService
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
   
   // Subscribe to tap events
   accel_tap_service_subscribe(accel_tap_handler);
+  
+  //Show an animation
+  anim_start (0);
 }
 
 static void deinit() {

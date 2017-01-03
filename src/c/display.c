@@ -17,7 +17,7 @@ void face_init_array (void)
 }
 
 //Update the face array with the hours and minutes provided
-static void face_update (int hours, int minutes)
+void face_update (int hours, int minutes)
 {
   int x, y = 0;
   int rows = minutes / 5;
@@ -66,19 +66,21 @@ static void face_draw_date_symbol (void)
 static void draw_face (GContext *ctx)
 {
   //Clear the face array
-  face_init_array ();
 
   if (watch_mode == show_time)
   {
+    face_init_array ();
     face_update (hours, minutes);
   }
   else if (watch_mode == show_date)
   {
+    face_init_array ();
     face_draw_date_symbol ();
     face_update (month, day);
   }
   else if (watch_mode == show_anim)
   {
+    face_update (hours, minutes);
     frame_draw_array (anim.step);
     anim_step_increment ();
   }

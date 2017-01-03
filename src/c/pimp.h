@@ -34,3 +34,4 @@ Layer *grid_layer;
 Layer *dots_layer;
 
 void update_time (void);
+void face_update (int hours, int minutes);

@@ -31,9 +31,10 @@ static int anim_check_dot (int frame_no, int j, int i)
       return anim4_frame[frame_no][j][i];
       break;
     default:
-      return 1;
+      return 0;
       break;
   }
+  return 0;
 }
 
 static void anim_load (int anim_num)
@@ -72,8 +73,25 @@ static void anim_load (int anim_num)
   }
 }
 
+static void anim_backup_array (void)
+{
+  int i, j;
+  
+  for (i = 0; i < FACE_WIDTH; i++)
+  {
+    for (j = 0; j < FACE_HEIGHT; j++)
+    {
+      face_array_old[i][j] = face_array[i][j];
+    }
+  }
+}
+
 void anim_start (int anim_num)
 {
+  if (anim.state != STOP)
+    return;
+  face_update (hours, minutes);
+  anim_backup_array ();
   //Randomise animation if none passed
   if (anim_num == 0)
   {
@@ -145,9 +163,14 @@ void frame_draw_array (int frame_no)
     {   
 //      if (anim1_frame[frame_no][j][i])
       if (anim_check_dot (frame_no, j, i))
-        face_array[i][n] = 1;
-      else
+          face_array[i][n] = 1;
+      else 
         face_array[i][n] = 0;
+      
+      if (anim.state == BACKWARD && face_array_old[i][n])
+      {
+        face_array[i][n] = face_array_old[i][n];  
+      }
       n--;
     }
   }
