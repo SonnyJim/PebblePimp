@@ -3,6 +3,7 @@
 static Window *s_main_window;
 
 static int pimp_time_last_min;
+
 static int time_convert (int hours)
 {
   if (hours > 12)
@@ -90,7 +91,12 @@ static void accel_tap_handler(AccelAxisType axis, int32_t direction)
   {
     watch_mode = show_date;
     //Start a timer to change the mode back after 3 seconds
-    tap_timer = app_timer_register(3000, tap_timeout, NULL);
+    tap_timer = app_timer_register (3000, tap_timeout, NULL);
+  }
+  else if (watch_mode == show_date)
+  {
+    watch_mode = show_battery;
+    tap_timer = app_timer_register (3000, tap_timeout, NULL);
   }
   else
   {
@@ -130,10 +136,8 @@ static void init (void)
   //Set the watchface to show time
   watch_mode = show_time;
   
-  
   // Make sure the time is displayed from the start
   update_time();
-  
   
   // Register with TickTimerService
   tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
@@ -141,6 +145,9 @@ static void init (void)
   // Subscribe to tap events
   accel_tap_service_subscribe(accel_tap_handler);
   
+  //Subscribe to battery events
+  //battery_state_service_subscribe(get_battery);
+
   //Show an animation
   anim_start (0);
 }
@@ -148,7 +155,10 @@ static void init (void)
 static void deinit() {
   // Destroy Window
   window_destroy(s_main_window);
+  layer_destroy (dots_layer);
+  layer_destroy (grid_layer);
   accel_tap_service_unsubscribe();
+  //battery_state_service_unsubscribe();
 }
 
 int main(void) {

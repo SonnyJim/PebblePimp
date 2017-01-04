@@ -22,7 +22,19 @@ void face_update (int hours, int minutes)
   int x, y = 0;
   int rows = minutes / 5;
   int remainder = minutes % 5;
-    
+  
+  if (hours > 12)
+  {
+    APP_LOG (APP_LOG_LEVEL_ERROR, "face_update: Requested a value bigger than 12: %d", hours);
+    hours = 12;
+  }
+  
+  if (minutes > 60)
+  {
+    APP_LOG (APP_LOG_LEVEL_ERROR, "face_update: Requested a value bigger than 60: %d", minutes);
+    minutes = 60;
+  }
+  
   //Fill the array with the hours
   x = 0;
   for (y = 0; y < hours; y++)
@@ -62,29 +74,51 @@ static void face_draw_date_symbol (void)
   face_array[4][7] = true;
 }
 
+//Returns 0 for no connection, 12 for connected
+static int get_bluetooth (void)
+{
+  if (bluetooth_connection_service_peek())
+    return 12;
+  else
+    return 0;
+}
+  
+//Returns 0-60 so it fits with the minutes
+static int get_battery (void) 
+{
+  BatteryChargeState charge_state = battery_state_service_peek();
+  return (charge_state.charge_percent / 100) * 60;
+}
 
 static void draw_face (GContext *ctx)
 {
-  //Clear the face array
-
-  if (watch_mode == show_time)
+  //Set up the dots array
+  switch (watch_mode)
   {
-    face_init_array ();
-    face_update (hours, minutes);
-  }
-  else if (watch_mode == show_date)
-  {
-    face_init_array ();
-    face_draw_date_symbol ();
-    face_update (month, day);
-  }
-  else if (watch_mode == show_anim)
-  {
-    face_update (hours, minutes);
-    frame_draw_array (anim.step);
-    anim_step_increment ();
+    case show_anim:
+      face_update (hours, minutes);
+      frame_draw_array (anim.step);
+      anim_step_increment ();
+      break;
+    
+    case show_date:
+      face_init_array ();
+      face_draw_date_symbol ();
+      face_update (month, day);
+      break;
+    
+    case show_battery:
+      face_init_array ();
+      face_update (get_bluetooth(), get_battery());
+      break;
+    
+    case show_time:
+      face_init_array ();
+      face_update (hours, minutes);
+      break;
   }
   
+  //Draw it
   draw_face_array (ctx);
 }
 
