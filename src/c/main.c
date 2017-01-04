@@ -97,7 +97,10 @@ static void accel_tap_handler(AccelAxisType axis, int32_t direction)
   else if (watch_mode == show_date)
   {
     watch_mode = show_battery;
-    tap_timer = app_timer_register (3000, tap_timeout, NULL);
+    if (tap_timer != NULL)
+      app_timer_reschedule(tap_timer, 3000);
+    else
+      tap_timer = app_timer_register (3000, tap_timeout, NULL);
   }
   else
   {
