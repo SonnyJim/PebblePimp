@@ -51,6 +51,7 @@ void update_time (void)
   
   if (pimp_time_check (now_tm->tm_hour))
     anim_start (0);
+  
   //Redraw the dots layer
   layer_mark_dirty(dots_layer);
 }
@@ -145,9 +146,6 @@ static void init (void)
   // Subscribe to tap events
   accel_tap_service_subscribe(accel_tap_handler);
   
-  //Subscribe to battery events
-  //battery_state_service_subscribe(get_battery);
-
   //Show an animation
   anim_start (0);
 }
@@ -155,10 +153,7 @@ static void init (void)
 static void deinit() {
   // Destroy Window
   window_destroy(s_main_window);
-  layer_destroy (dots_layer);
-  layer_destroy (grid_layer);
   accel_tap_service_unsubscribe();
-  //battery_state_service_unsubscribe();
 }
 
 int main(void) {
