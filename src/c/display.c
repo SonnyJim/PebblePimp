@@ -87,7 +87,8 @@ static int get_bluetooth (void)
 static int get_battery (void) 
 {
   BatteryChargeState charge_state = battery_state_service_peek();
-  return (charge_state.charge_percent / 100) * 60;
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Battery: %i", 6- charge_state.charge_percent);
+  return (60 * (charge_state.charge_percent) / 100);
 }
 
 static void draw_face (GContext *ctx)
@@ -109,6 +110,8 @@ static void draw_face (GContext *ctx)
     
     case show_battery:
       face_init_array ();
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "Calc Battery: %i", get_battery());
+
       face_update (get_bluetooth(), get_battery());
       break;
     

@@ -197,11 +197,13 @@ void frame_draw_array (int frame_no)
           face_array[i][n] = 1;
       else 
         face_array[i][n] = 0;
-      
+    
+  /*    
       if (anim.state == BACKWARD && face_array_old[i][n])
       {
         face_array[i][n] = face_array_old[i][n];  
       }
+  */
       n--;
     }
   }

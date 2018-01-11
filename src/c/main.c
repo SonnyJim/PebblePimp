@@ -16,6 +16,8 @@ static int time_convert (int hours)
 
 static int pimp_time_check (int hours)
 {
+  //Pimp time currently disabled :(
+  return 0;
   if (pimp_time_last_min == minutes)
     return 0;
   
@@ -79,7 +81,7 @@ static void main_window_unload(Window *window)
   layer_destroy (dots_layer);
 }
 
-static void tap_timeout (void * value)
+static void f_tap_timeout (void * value)
 {
   watch_mode = show_time;
   update_time ();
@@ -92,15 +94,15 @@ static void accel_tap_handler(AccelAxisType axis, int32_t direction)
   {
     watch_mode = show_date;
     //Start a timer to change the mode back after 3 seconds
-    tap_timer = app_timer_register (3000, tap_timeout, NULL);
+    tap_timer = app_timer_register (TAP_TIMEOUT, f_tap_timeout, NULL);
   }
   else if (watch_mode == show_date)
   {
     watch_mode = show_battery;
     if (tap_timer != NULL)
-      app_timer_reschedule(tap_timer, 3000);
+      app_timer_reschedule(tap_timer, TAP_TIMEOUT);
     else
-      tap_timer = app_timer_register (3000, tap_timeout, NULL);
+      tap_timer = app_timer_register (TAP_TIMEOUT, f_tap_timeout, NULL);
   }
   else
   {
@@ -111,6 +113,11 @@ static void accel_tap_handler(AccelAxisType axis, int32_t direction)
     
   //Force redraw
   update_time ();  
+}
+static void battery_state_handler(BatteryChargeState charge) {
+  // Report the current charge percentage
+  APP_LOG(APP_LOG_LEVEL_INFO, "Battery charge is %d%%", 
+                                                    (int)charge.charge_percent);
 }
 
 static void init (void) 
@@ -148,7 +155,8 @@ static void init (void)
   
   // Subscribe to tap events
   accel_tap_service_subscribe(accel_tap_handler);
-  
+  battery_state_service_subscribe(battery_state_handler);
+
   //Show an animation
   anim_start (0);
 }
@@ -157,6 +165,7 @@ static void deinit() {
   // Destroy Window
   window_destroy(s_main_window);
   accel_tap_service_unsubscribe();
+  battery_state_service_unsubscribe();
 }
 
 int main(void) {

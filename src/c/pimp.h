@@ -13,6 +13,8 @@
 #define FACE_WIDTH 6
 #define FACE_HEIGHT 12
 
+#define TAP_TIMEOUT 4000
+
 int hours, minutes, hours_gmt, dst_gmt;
 int month, day;
 

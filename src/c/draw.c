@@ -110,3 +110,28 @@ int face_fill (int x, int y, GContext *ctx)
   return 0;
 }
 
+int face_fill_cross (int x, int y, GContext *ctx)
+{
+  int x_face, y_face;
+  GPoint start, end;
+  
+  if (x > 6 || y > 12)
+  {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "face_fill_cross warning:  %d,%d requested out of range", x,y);
+    return 1;
+  }
+  
+  //Convert the grid array coords into the screen coords
+  x_face = 1 + offset_x + (x * (BLOBSIZE + 1));
+  y_face = HEIGHT - BLOBSIZE - offset_y + 1 - (y * (BLOBSIZE + 1));
+  
+  start = GPoint(x_face - 1, y_face - 1);
+  end = GPoint(x_face + (BLOBSIZE - 1), y_face + (BLOBSIZE - 1));
+  graphics_draw_line(ctx, start, end);
+  
+  start = GPoint(x_face - 1, y_face + (BLOBSIZE - 1));
+  end = GPoint(x_face + (BLOBSIZE -1), y_face - 1);
+  graphics_draw_line(ctx, start, end);
+  
+  return 0;
+}
