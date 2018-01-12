@@ -1,8 +1,7 @@
 #include "src/c/pimp.h"
-#include "src/c/anim.h"
-static Window *s_main_window;
 
-static int pimp_time_last_min;
+Window *s_main_window;
+void start_apng (void);
 
 static int time_convert (int hours)
 {
@@ -12,22 +11,6 @@ static int time_convert (int hours)
     return 12;
   else
     return hours;
-}
-
-static int pimp_time_check (int hours)
-{
-  //Pimp time currently disabled :(
-  return 0;
-  if (pimp_time_last_min == minutes)
-    return 0;
-  
-  pimp_time_last_min = minutes;
-  
-  if ((hours > 18 || hours < 2) )
-      //&& minutes % 5 == 0)
-    return 1;
-  else
-    return 0;
 }
 
 void update_time (void) 
@@ -50,9 +33,6 @@ void update_time (void)
   //Only show 12hr time format
   hours = time_convert (hours);
   hours_gmt = time_convert (hours_gmt);
-  
-  if (pimp_time_check (now_tm->tm_hour))
-    anim_start (0);
   
   //Redraw the dots layer
   layer_mark_dirty(dots_layer);
@@ -87,22 +67,15 @@ static void f_tap_timeout (void * value)
   update_time ();
 }
 
+
 static void accel_tap_handler(AccelAxisType axis, int32_t direction) 
 {
   // A tap event occured
   if (watch_mode == show_time)
   {
     watch_mode = show_date;
-    //Start a timer to change the mode back after 3 seconds
+    //Start a timer to change the mode back after timeout
     tap_timer = app_timer_register (TAP_TIMEOUT, f_tap_timeout, NULL);
-  }
-  else if (watch_mode == show_date)
-  {
-    watch_mode = show_battery;
-    if (tap_timer != NULL)
-      app_timer_reschedule(tap_timer, TAP_TIMEOUT);
-    else
-      tap_timer = app_timer_register (TAP_TIMEOUT, f_tap_timeout, NULL);
   }
   else
   {
@@ -113,11 +86,6 @@ static void accel_tap_handler(AccelAxisType axis, int32_t direction)
     
   //Force redraw
   update_time ();  
-}
-static void battery_state_handler(BatteryChargeState charge) {
-  // Report the current charge percentage
-  APP_LOG(APP_LOG_LEVEL_INFO, "Battery charge is %d%%", 
-                                                    (int)charge.charge_percent);
 }
 
 static void init (void) 
@@ -151,24 +119,24 @@ static void init (void)
   update_time();
   
   // Register with TickTimerService
-  tick_timer_service_subscribe(MINUTE_UNIT, tick_handler);
+  tick_timer_service_subscribe (MINUTE_UNIT, tick_handler);
   
   // Subscribe to tap events
-  accel_tap_service_subscribe(accel_tap_handler);
-  battery_state_service_subscribe(battery_state_handler);
-
+  accel_tap_service_subscribe (accel_tap_handler);
+  
   //Show an animation
-  anim_start (0);
+  start_apng();
 }
 
-static void deinit() {
+static void deinit() 
+{
   // Destroy Window
   window_destroy(s_main_window);
   accel_tap_service_unsubscribe();
-  battery_state_service_unsubscribe();
 }
 
-int main(void) {
+int main (void) 
+{
   init();
   app_event_loop();
   deinit();

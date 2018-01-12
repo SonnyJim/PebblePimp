@@ -1,6 +1,5 @@
 #include "src/c/pimp.h"
 #include "src/c/draw.h"
-#include "src/c/anim.h"
 
 //Initialise the face array
 void face_init_array (void)
@@ -74,45 +73,15 @@ static void face_draw_date_symbol (void)
   face_array[4][7] = true;
 }
 
-//Returns 0 for no connection, 12 for connected
-static int get_bluetooth (void)
-{
-  if (bluetooth_connection_service_peek())
-    return 12;
-  else
-    return 0;
-}
-  
-//Returns 0-60 so it fits with the minutes
-static int get_battery (void) 
-{
-  BatteryChargeState charge_state = battery_state_service_peek();
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Battery: %i", 6- charge_state.charge_percent);
-  return (60 * (charge_state.charge_percent) / 100);
-}
-
 static void draw_face (GContext *ctx)
 {
   //Set up the dots array
   switch (watch_mode)
   {
-    case show_anim:
-      face_update (hours, minutes);
-      frame_draw_array (anim.step);
-      anim_step_increment ();
-      break;
-    
     case show_date:
       face_init_array ();
       face_draw_date_symbol ();
       face_update (month, day);
-      break;
-    
-    case show_battery:
-      face_init_array ();
-      APP_LOG(APP_LOG_LEVEL_DEBUG, "Calc Battery: %i", get_battery());
-
-      face_update (get_bluetooth(), get_battery());
       break;
     
     case show_time:

@@ -9,14 +9,22 @@
         "messageKeys": [],
         "projectType": "native",
         "resources": {
-            "media": []
+            "media": [
+                {
+                    "file": "data/pebble.png",
+                    "name": "APNG",
+                    "targetPlatforms": [
+                        "aplite",
+                        "basalt"
+                    ],
+                    "type": "raw"
+                }
+            ]
         },
         "sdkVersion": "3",
         "targetPlatforms": [
             "aplite",
-            "basalt",
-            "diorite",
-            "emery"
+            "basalt"
         ],
         "uuid": "70a0f749-7d14-4fd6-a698-9a4f16decae7",
         "watchapp": {

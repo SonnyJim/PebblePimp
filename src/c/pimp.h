@@ -26,13 +26,11 @@ enum watch_modes
   show_time,
   show_date,
   show_anim,
-  show_battery
 };
 
 int watch_mode;
-int watch_battery; //Stored as 0-60
 
-AppTimer * tap_timer;
+AppTimer *tap_timer;
 
 Layer *grid_layer;
 Layer *dots_layer;
