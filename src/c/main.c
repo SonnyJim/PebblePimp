@@ -1,7 +1,7 @@
 #include "src/c/pimp.h"
-
 Window *s_main_window;
-void start_apng (void);
+
+extern void anim_start (void);
 
 static int time_convert (int hours)
 {
@@ -35,15 +35,12 @@ void update_time (void)
   hours_gmt = time_convert (hours_gmt);
   
   //Redraw the dots layer
-  layer_mark_dirty(dots_layer);
+  if (watch_mode != show_anim)
+    layer_mark_dirty(dots_layer);
 }
 
 static void tick_handler(struct tm *tick_time, TimeUnits units_changed) 
 {
-  //don't update the time if the animation is running
-  if (watch_mode == show_anim)
-    return;
-  
   update_time();
 }
 
@@ -53,12 +50,15 @@ static void main_window_load(Window *window)
   GRect bounds = layer_get_bounds(window_get_root_layer(window));
   grid_layer = layer_create(bounds);
   dots_layer = layer_create(bounds);
+  bitmap_layer = bitmap_layer_create(bounds);
+  bitmap_layer_set_compositing_mode(bitmap_layer, GCompOpSet);
 }
 
 static void main_window_unload(Window *window) 
 {
   layer_destroy (grid_layer);
   layer_destroy (dots_layer);
+  bitmap_layer_destroy (bitmap_layer);
 }
 
 static void f_tap_timeout (void * value)
@@ -77,7 +77,7 @@ static void accel_tap_handler(AccelAxisType axis, int32_t direction)
     //Start a timer to change the mode back after timeout
     tap_timer = app_timer_register (TAP_TIMEOUT, f_tap_timeout, NULL);
   }
-  else
+  else if (watch_mode != show_anim)
   {
     watch_mode = show_time;
     if (tap_timer != NULL)
@@ -109,23 +109,23 @@ static void init (void)
   layer_set_update_proc (dots_layer, dots_update_proc);
   
   // Add to Window
+  layer_add_child(window_get_root_layer(s_main_window), bitmap_layer_get_layer(bitmap_layer));
+
   layer_add_child(window_get_root_layer(s_main_window), grid_layer);
   layer_add_child(window_get_root_layer(s_main_window), dots_layer);
 
   //Set the watchface to show time
   watch_mode = show_time;
-  
-  // Make sure the time is displayed from the start
-  update_time();
-  
+
   // Register with TickTimerService
   tick_timer_service_subscribe (MINUTE_UNIT, tick_handler);
   
   // Subscribe to tap events
   accel_tap_service_subscribe (accel_tap_handler);
   
-  //Show an animation
-  start_apng();
+  // Make sure the time is displayed from the start
+  anim_start ();
+  update_time ();
 }
 
 static void deinit() 

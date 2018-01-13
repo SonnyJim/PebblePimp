@@ -110,6 +110,9 @@ static void set_bg_fg_colour (GContext *ctx)
 
 void grid_update_proc(Layer *layer, GContext *ctx) 
 {
+  if (watch_mode == show_anim)
+    return;
+  APP_LOG (APP_LOG_LEVEL_DEBUG, "grid_update_proc: %i:%i", hours, minutes);
   set_bg_fg_colour (ctx);
   draw_grid (ctx);
   draw_text (ctx);
@@ -117,6 +120,9 @@ void grid_update_proc(Layer *layer, GContext *ctx)
 
 void dots_update_proc(Layer *layer, GContext *ctx) 
 {
+  if (watch_mode == show_anim)
+    return;
+  APP_LOG (APP_LOG_LEVEL_DEBUG, "dots_update_proc: %i:%i", hours, minutes);
   graphics_context_set_stroke_color(ctx, GColorWhite);
   graphics_context_set_fill_color(ctx, GColorWhite);
   graphics_context_set_text_color(ctx, GColorWhite);

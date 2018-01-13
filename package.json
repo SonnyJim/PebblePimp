@@ -11,20 +11,37 @@
         "resources": {
             "media": [
                 {
-                    "file": "data/pebble.png",
-                    "name": "APNG",
-                    "targetPlatforms": [
-                        "aplite",
-                        "basalt"
-                    ],
-                    "type": "raw"
+                    "file": "images/I.png",
+                    "name": "I",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/M.png",
+                    "name": "M",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/P.png",
+                    "name": "P",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/Pimp_bg.bmp",
+                    "name": "BG",
+                    "targetPlatforms": null,
+                    "type": "bitmap"
                 }
             ]
         },
         "sdkVersion": "3",
         "targetPlatforms": [
             "aplite",
-            "basalt"
+            "basalt",
+            "diorite",
+            "emery"
         ],
         "uuid": "70a0f749-7d14-4fd6-a698-9a4f16decae7",
         "watchapp": {
