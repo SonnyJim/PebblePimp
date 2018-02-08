@@ -11,4 +11,3 @@ int offset_x, offset_y;
 bool face_array[FACE_WIDTH][FACE_HEIGHT];
 bool face_array_old[FACE_WIDTH][FACE_HEIGHT];
 
-void anim_draw (GContext *ctx);

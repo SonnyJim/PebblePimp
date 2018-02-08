@@ -16,7 +16,7 @@
 #define TAP_TIMEOUT 4000
 
 int hours, minutes, hours_gmt, dst_gmt;
-int month, day;
+int month, day, wday;
 
 extern void grid_update_proc(Layer *layer, GContext *ctx);
 extern void dots_update_proc(Layer *layer, GContext *ctx);

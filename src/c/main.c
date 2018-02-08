@@ -29,6 +29,8 @@ void update_time (void)
   //Month is from 0 - 11, duuh
   month = now_tm->tm_mon + 1;
   day = now_tm->tm_mday;
+  //Week day is 0 = Sunday
+  wday = now_tm->tm_wday;
   
   //Only show 12hr time format
   hours = time_convert (hours);
@@ -49,14 +51,15 @@ static void main_window_load(Window *window)
   //Create the two layers used
   GRect bounds = layer_get_bounds(window_get_root_layer(window));
   grid_layer = layer_create(bounds);
-  dots_layer = layer_create(bounds);
   bitmap_layer = bitmap_layer_create(bounds);
   bitmap_layer_set_compositing_mode(bitmap_layer, GCompOpSet);
+  dots_layer = layer_create(bounds);
+
 }
 
 static void main_window_unload(Window *window) 
 {
-  layer_destroy (grid_layer);
+  //layer_destroy (grid_layer);
   layer_destroy (dots_layer);
   bitmap_layer_destroy (bitmap_layer);
 }
@@ -110,7 +113,6 @@ static void init (void)
   
   // Add to Window
   layer_add_child(window_get_root_layer(s_main_window), bitmap_layer_get_layer(bitmap_layer));
-
   layer_add_child(window_get_root_layer(s_main_window), grid_layer);
   layer_add_child(window_get_root_layer(s_main_window), dots_layer);
 
@@ -124,7 +126,7 @@ static void init (void)
   accel_tap_service_subscribe (accel_tap_handler);
   
   // Make sure the time is displayed from the start
-  anim_start ();
+  //anim_start ();
   update_time ();
 }
 

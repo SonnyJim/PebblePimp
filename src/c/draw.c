@@ -3,6 +3,8 @@
 int offset_x = BLOBSIZE + 20;
 int offset_y = BLOBSIZE / 2;
 
+const char *wday_str[] = {"Su", "Mo", "Tu", "We", "Th", "Fr", "Sa",};
+
 void draw_grid (GContext *ctx)
 {
   int i;
@@ -61,8 +63,10 @@ void draw_text (GContext *ctx)
       graphics_fill_circle (ctx, GPoint (10, text_rect.origin.y + 9), 2);
     
     //Draw minutes text
-    if (i * 5 < 10)
-      snprintf (str, sizeof(str), "0%i", i * 5);
+    if (watch_mode == show_date && i == 1)
+      snprintf (str, sizeof(str), wday_str[wday]);
+    else if (i * 5 < 10)
+      snprintf (str, sizeof(str), "0%i", i * 5); //Pad the number with a leading zero if it's less than 10
     else
       snprintf (str, sizeof(str), "%i", i * 5);
 
